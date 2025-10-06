@@ -1,0 +1,14 @@
+{
+    "FACEBOOK_EMAIL": "your_email@example.com",
+    "FACEBOOK_PASSWORD": "your_password",
+    "CATEGORY": "vehicles",
+    "CHECK_INTERVAL": 50,
+    "GMAIL_USER": "your_email@example.com",
+    "GMAIL_PASS": "your_app_password",
+    "TO_EMAIL": "recipient@example.com",
+    "LOG_PATH": null,
+    "MAX_MINUTES": 2,
+    "MIN_PRICE": 40000,
+    "MAX_PRICE": 800000,
+    "QUERY": "honda"
+}
