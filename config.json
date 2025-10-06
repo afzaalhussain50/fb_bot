@@ -1,0 +1,14 @@
+{
+    "FACEBOOK_EMAIL": "helperusa7@gmail.com",
+    "FACEBOOK_PASSWORD": "5859843notrust",
+    "CATEGORY": "vehicles",
+    "CHECK_INTERVAL": 50,
+    "GMAIL_USER": "helperusa7@gmail.com",
+    "GMAIL_PASS": "oqtf ntrg pdin yvst",
+    "TO_EMAIL": "jabautoexport@gmail.com",
+    "LOG_PATH": null,
+    "MAX_MINUTES": 2,
+    "MIN_PRICE": 40000,
+    "MAX_PRICE": 800000,
+    "QUERY": "honda"
+}
