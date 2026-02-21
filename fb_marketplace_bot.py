@@ -4,8 +4,12 @@ import smtplib
 import logging
 from email.mime.text import MIMEText
 from selenium import webdriver
+from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebDriver  # Force import for PyInstaller
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import sys
 import os
@@ -85,22 +89,45 @@ logging.basicConfig(
 )
 
 # === SELENIUM SETUP ===
-options = webdriver.ChromeOptions()
-# options.add_argument("--headless")  # comment this line to see browser
-options.add_argument("--disable-gpu")
-options.add_argument("--no-sandbox")
-options.add_argument("--window-size=1920,1080")
+driver = None
 
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+def init_driver():
+    global driver
+    if driver is not None:
+        return driver
+    
+    options = Options()
+    # options.add_argument("--headless")  # comment this line to see browser
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--window-size=1920,1080")
+    
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    return driver
 
 def login_to_facebook():
-    logging.info("Logging into Facebook...")
+    global driver
+    driver = init_driver()
+    
+    logging.info("Opening Facebook login page...")
+    logging.info("=" * 60)
+    logging.info("PLEASE LOG IN MANUALLY IN THE BROWSER WINDOW")
+    logging.info("The bot will automatically continue once you're logged in")
+    logging.info("=" * 60)
     driver.get("https://www.facebook.com/login")
-    time.sleep(3)
-    driver.find_element(By.ID, "email").send_keys(FACEBOOK_EMAIL)
-    driver.find_element(By.ID, "pass").send_keys(FACEBOOK_PASSWORD)
-    driver.find_element(By.NAME, "login").click()
-    time.sleep(5)
+    
+    # Wait for user to manually log in (wait until URL changes from login page)
+    try:
+        # Wait for up to 5 minutes for the user to log in
+        # Check if URL no longer contains "login" which indicates successful login
+        WebDriverWait(driver, 300).until(
+            lambda d: "login" not in d.current_url.lower()
+        )
+        logging.info("Login detected! Continuing with the bot...")
+        time.sleep(3)  # Give a moment for the page to fully load
+    except Exception as e:
+        logging.error(f"Timeout waiting for manual login: {e}")
+        raise
 
 def fetch_ads(sent_ads):
     import re
@@ -207,4 +234,5 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         logging.info("Stopped by user.")
     finally:
-        driver.quit()
+        if driver is not None:
+            driver.quit()
